@@ -1,9 +1,9 @@
 #############################################################
 # 
-# This is for DeploymentManager. For AppSrv, change dmgr -> server1 in the queryNames below. 
+# This is a sample diagnostic plan for Certificate Expiration Monitor on a DeploymentManager. OR standalone server (Please change the server name) 
 # 
-# The output 
-# If the line that contains "RASTraceMBean" is removed, the trace will be written out to the usual trace. 
+# The output : {was_install_dir}/profiles/Dmgr01/traceDump_xxxx.log
+# If the line that contains "RASTraceMBean" is commented out, the output will be written out to the usual trace.log
 # 
 ##############################################################
 # Query to find the TraceService MBean
@@ -18,7 +18,7 @@ diagPlanMBean = AdminControl.queryNames('WebSphere:type=DiagPlanManager,process=
 objName = AdminControl.makeObjectName(diagPlanMBean)
 
 
-# This parameter contains the same instruction x 3 times, in case the certificate expiration monitor is kicked off unexpectedly multiple times.  
+# Same instruction x 3 times. This is to capture all possible data in case alarm for the cert monitor fires multiple times within short period of time. 
 # From MATCH=TRACE:CWPKI0059I to DUMPBUFFER is one cycle. 
 
 parms =["MATCH=TRACE:CWPKI0059I*,SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=all,MATCH=TRACE:CWPKI0060I*,DELAY=300,SET_TRACESPEC=*=info,DUMPBUFFER,MATCH=TRACE:CWPKI0059I*,SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=all,MATCH=TRACE:CWPKI0060I*,DELAY=300,SET_TRACESPEC=*=info,DUMPBUFFER,MATCH=TRACE:CWPKI0059I*,SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=all,MATCH=TRACE:CWPKI0060I*,DELAY=300,SET_TRACESPEC=*=info,DUMPBUFFER"]
@@ -28,26 +28,23 @@ AdminControl.invoke_jmx(objName, 'setDiagPlan', parms, ["java.lang.String"])
 
 print "\nCertificate Monitor diagplan is set"
 
-###############################################################
-# Following is the break down of actions. 
 
+#####  One set of instruction ###############################
+# When message matches CWPKI0059I  (= When the scheduler alarm fires to start cert expiration monitor) 
+# Trace starts
+# once message matches CWPKI0060I  (= The cert monitor ended and all the processing ends)  
+# Depaly 300 sec = 5 mins to let SSL update takes place. 
+# Put the tracing back to default (*=info)
+# Dump out the buffer to ({was_install_dir}/profiles/Dmgr01/traceDump_xxxx.log)
+#
 # parms =["
 # MATCH=TRACE:CWPKI0059I*,
-# SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=al#l,
+# SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=# all
 # MATCH=TRACE:CWPKI0060I*,
 # DELAY=300,
 # SET_TRACESPEC=*=info,
 # DUMPBUFFER,
 # ...
 # "]
-#
+#############################################################
 
-# Trace that is currently in the diag plan  
-# com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=all
-
-# Reduced trace in the SSL=all
-# com.ibm.ws.security.core.distSecurityComponentImpl=all: com.ibm.ws.ssl.commands.WSCertExpMonitor.*=all: com.ibm.ws.security.config.SSLConfigCompare=all: com.ibm.ws.management.repository.FileDocument=all: com.ibm.ws.management.repository.FileRepository=all: com.ibm.ws.management.connector.soap.SOAPServer=all: com.ibm.ws.ssl.config.SSLConfigManager=all: com.ibm.websphere.ssl.JSSEHelper=all
-# *=info:com.ibm.ws.crypto.config.WSScheduler=all
-
-# Reduced startup trace. 
-# com.ibm.ws.crypto.config.WSScheduler=all
