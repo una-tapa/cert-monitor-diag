@@ -21,7 +21,7 @@ objName = AdminControl.makeObjectName(diagPlanMBean)
 # Same instruction x 3 times. This is to capture all possible data in case alarm for the cert monitor fires multiple times within short period of time. 
 # From MATCH=TRACE:CWPKI0059I to DUMPBUFFER is one cycle. 
 
-parms =["MATCH=TRACE:CWPKI0059I*,SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=all,MATCH=TRACE:CWPKI0060I*,DELAY=300,SET_TRACESPEC=*=info,DUMPBUFFER,MATCH=TRACE:CWPKI0059I*,SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=all,MATCH=TRACE:CWPKI0060I*,DELAY=300,SET_TRACESPEC=*=info,DUMPBUFFER,MATCH=TRACE:CWPKI0059I*,SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=all,MATCH=TRACE:CWPKI0060I*,DELAY=300,SET_TRACESPEC=*=info,DUMPBUFFER"]
+parms =["MATCH=TRACE:CWPKI0059I*,SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=all:com.ibm.ws.sm.workspace.*=all,MATCH=TRACE:CWPKI0060I*,DELAY=300,SET_TRACESPEC=*=info,DUMPBUFFER,MATCH=TRACE:CWPKI0059I*,SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=all:com.ibm.ws.sm.workspace.*=all,MATCH=TRACE:CWPKI0060I*,DELAY=300,SET_TRACESPEC=*=info,DUMPBUFFER,MATCH=TRACE:CWPKI0059I*,SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=all:com.ibm.ws.sm.workspace.*=all,MATCH=TRACE:CWPKI0060I*,DELAY=300,SET_TRACESPEC=*=info,DUMPBUFFER"]
 
 # Run the setDiagPlan method in the MBean with the diagnostic plan string.
 AdminControl.invoke_jmx(objName, 'setDiagPlan', parms, ["java.lang.String"])
@@ -39,7 +39,7 @@ print "\nCertificate Monitor diagplan is set"
 #
 # parms =["
 # MATCH=TRACE:CWPKI0059I*,
-# SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=# all
+# SET_TRACESPEC=*=info:com.ibm.ws.security.core.distSecurityComponentImpl=all:SSL=all:com.ibm.ws.management.repository.FileDocument=all:com.ibm.ws.management.repository.FileRepository=all:com.ibm.ws.management.connector.soap.SOAPServer=all:com.ibm.ws.sm.workspace.*=all
 # MATCH=TRACE:CWPKI0060I*,
 # DELAY=300,
 # SET_TRACESPEC=*=info,
